@@ -866,64 +866,71 @@ std::string Areas::toJSON() const {
 */
 
 std::ostream &operator<<(std::ostream &os, const Areas &areas) {
+
     for(auto const& area : areas.areas) {
         os << area.second->getName("eng") << " / " << area.second->getName("cym") << " " << "(" << area.second->getLocalAuthorityCode() << ")" << "\n";
-        for(auto const& measure: area.second->getAllMeasures()) {
-            os << measure.second->getLabel() << " " << "(" << measure.second->getCodename() << ")" << "\n";
+        if(!area.second->getAllMeasures().empty()) {
+            for(auto const& measure: area.second->getAllMeasures()) {
+                os << measure.second->getLabel() << " " << "(" << measure.second->getCodename() << ")" << "\n";
 
-            auto values = measure.second->getAllValues();
-            double total = 0.0;
-            unsigned int valuesSize = values.size();
-            double average;
-            double difference = (values.rbegin()->second) -
-                                (values.begin()->second);
-            double percentageDifference = (difference / (values.begin()->second)) * 100;
+                auto values = measure.second->getAllValues();
+                double total = 0.0;
+                unsigned int valuesSize = values.size();
+                double average;
+                double difference = (values.rbegin()->second) -
+                                    (values.begin()->second);
+                double percentageDifference = (difference / (values.begin()->second)) * 100;
 
-            for(auto const& value: values) {
-                std::stringstream valueSS;
-                valueSS << std::setprecision(6) << std::fixed << value.second;
-                int columnWidth = valueSS.str().length();
+                for(auto const& value: values) {
+                    std::stringstream valueSS;
+                    valueSS << std::setprecision(6) << std::fixed << value.second;
+                    int columnWidth = valueSS.str().length();
 
-                total += value.second;
+                    total += value.second;
 
-                os << std::setw(columnWidth) << value.first <<  " ";
+                    os << std::setw(columnWidth) << value.first <<  " ";
+                }
+
+                average = (total/valuesSize);
+                std::stringstream averageSS;
+                averageSS << std::setprecision(6) << std::fixed << average;
+                int averageColumnWidth = averageSS.str().length();
+
+                std::stringstream differenceSS;
+                differenceSS << std::setprecision(6) << std::fixed << difference;
+                int differenceColumnWidth = differenceSS.str().length();
+
+                std::stringstream perDifferenceSS;
+                perDifferenceSS << std::setprecision(6) << std::fixed << percentageDifference;
+                int perDifferenceColumnWidth = perDifferenceSS.str().length();
+
+                os << std::setw(averageColumnWidth) << "Average" << " ";
+                os << std::setw(differenceColumnWidth) << "Diff." << " ";
+                os << std::setw(perDifferenceColumnWidth) << "% Diff." << " ";
+                os << "\n";
+
+                for(auto const& value: values) {
+                    std::stringstream valueSS;
+                    valueSS << std::setprecision(6) << std::fixed << value.second;
+                    int columnWidth = valueSS.str().length();
+
+                    os << std::setw(columnWidth) <<std::setprecision(6) << std::fixed << value.second << " ";
+                }
+
+                os << std::setw(averageColumnWidth) << average << " ";
+                os << std::setw(differenceColumnWidth) << difference << " ";
+                os << std::setw(perDifferenceColumnWidth) << percentageDifference << " ";
+                os << "\n" << "\n";
             }
-
-            average = (total/valuesSize);
-            std::stringstream averageSS;
-            averageSS << std::setprecision(6) << std::fixed << average;
-            int averageColumnWidth = averageSS.str().length();
-
-            std::stringstream differenceSS;
-            differenceSS << std::setprecision(6) << std::fixed << difference;
-            int differenceColumnWidth = differenceSS.str().length();
-
-            std::stringstream perDifferenceSS;
-            perDifferenceSS << std::setprecision(6) << std::fixed << percentageDifference;
-            int perDifferenceColumnWidth = perDifferenceSS.str().length();
-
-            os << std::setw(averageColumnWidth) << "Average" << " ";
-            os << std::setw(differenceColumnWidth) << "Diff." << " ";
-            os << std::setw(perDifferenceColumnWidth) << "% Diff." << " ";
-            os << "\n";
-
-            for(auto const& value: values) {
-                std::stringstream valueSS;
-                valueSS << std::setprecision(6) << std::fixed << value.second;
-                int columnWidth = valueSS.str().length();
-
-                os << std::setw(columnWidth) <<std::setprecision(6) << std::fixed << value.second << " ";
-            }
-
-            os << std::setw(averageColumnWidth) << average << " ";
-            os << std::setw(differenceColumnWidth) << difference << " ";
-            os << std::setw(perDifferenceColumnWidth) << percentageDifference << " ";
-            os << "\n" << "\n";
+        } else {
+            os << "<no measures>" << "\n" << "\n";;
         }
     }
 
     return os;
 }
+
+
 
 
 

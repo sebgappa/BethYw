@@ -45,8 +45,6 @@ public:
 
     std::string getName(std::string const& lang);
 
-    std::string getAuthorityCode();
-
     std::map<std::string, std::string>& getAllNames();
 
     void setName(std::string langCode, const std::string &langValue);

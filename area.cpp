@@ -316,7 +316,3 @@ bool operator==(const Area &lhs, const Area &rhs) {
            std::equal(lhs.areaNames.begin(), lhs.areaNames.end(), rhs.areaNames.begin()) &&
            lhs.authorityCode == rhs.authorityCode;
 }
-
-std::string Area::getAuthorityCode() {
-    return this->authorityCode;
-}
